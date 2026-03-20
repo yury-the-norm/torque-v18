@@ -1,0 +1,94 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+/* ── Figma design tokens ── */
+:root {
+  --bg:        #0E0E0F;
+  --bg2:       #1C1D21;
+  --surface:   #1C1D21;
+  --orange:    #F04E23;
+  --blue:      #2D7FF9;
+  --green:     #2ECC71;
+  --amber:     #F5A623;
+  --border:    rgba(255,255,255,0.07);
+  --text:      #FFFFFF;
+  --muted:     rgba(255,255,255,0.45);
+  --muted2:    rgba(255,255,255,0.25);
+  --navbar-h:  56px;
+  --indicator-h: 34px;
+  --status-h:  54px;
+}
+
+* { box-sizing: border-box; margin: 0; padding: 0; -webkit-tap-highlight-color: transparent; }
+
+body {
+  background: #0a0a0b;
+  font-family: 'Inter', sans-serif;
+  color: #fff;
+  overflow: hidden;
+  height: 100vh;
+  display: flex; align-items: center; justify-content: center;
+}
+
+#root { width: 100vw; height: 100vh; display: flex; align-items: center; justify-content: center; }
+
+.scroll { overflow-y: auto; overflow-x: hidden; -webkit-overflow-scrolling: touch; scrollbar-width: none; }
+.scroll::-webkit-scrollbar { display: none; }
+
+/* Font helpers */
+.f-teko    { font-family: 'Teko', sans-serif; }
+.f-inter   { font-family: 'Inter', sans-serif; }
+.f-mono    { font-family: 'Space Mono', monospace; }
+
+/* Pressable */
+.pressable { cursor: pointer; transition: opacity 0.12s; user-select: none; }
+.pressable:active { opacity: 0.75; transform: scale(0.97); }
+
+/* ── Pressable / hover states ── */
+.pressable {
+  transition: opacity 0.12s, transform 0.12s;
+  user-select: none;
+  -webkit-tap-highlight-color: transparent;
+}
+.pressable:active {
+  opacity: 0.72;
+  transform: scale(0.96);
+}
+
+/* Screen entry animation */
+@keyframes screenIn {
+  from { opacity: 0; transform: translateY(8px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+.screen-enter {
+  animation: screenIn 0.28s cubic-bezier(0.32, 0.72, 0, 1) both;
+}
+
+/* Chart fade-in */
+@keyframes chartFade {
+  from { opacity: 0; clip-path: inset(0 100% 0 0); }
+  to   { opacity: 1; clip-path: inset(0 0% 0 0); }
+}
+.chart-enter {
+  animation: chartFade 0.7s cubic-bezier(0.4, 0, 0.2, 1) both;
+}
+
+/* Pulse ring for NFC */
+@keyframes pulseRing {
+  0%   { transform: scale(0.9); opacity: 0.8; }
+  70%  { transform: scale(1.4); opacity: 0; }
+  100% { transform: scale(0.9); opacity: 0; }
+}
+.pulse-ring {
+  animation: pulseRing 2s ease-out infinite;
+}
+
+/* Stagger for list items */
+@keyframes itemIn {
+  from { opacity: 0; transform: translateX(-12px); }
+  to   { opacity: 1; transform: translateX(0); }
+}
+.item-enter {
+  animation: itemIn 0.22s cubic-bezier(0.32, 0.72, 0, 1) both;
+}
