@@ -1,0 +1,501 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<title>Torque Connect · IA</title>
+<link href="https://fonts.googleapis.com/css2?family=Teko:wght@400;500&family=Inter:wght@300;400;500&family=Space+Mono:wght@400;700&display=swap" rel="stylesheet"/>
+<style>
+*{box-sizing:border-box;margin:0;padding:0}
+body{font-family:'Inter',sans-serif;background:#0E0E0F;color:#fff;min-height:100vh}
+
+/* ── Centered container ── */
+.wrap{width:100%;max-width:1280px;margin:0 auto;padding:0 40px}
+
+/* ── Tabs ── */
+.tab-bar{border-bottom:1px solid rgba(255,255,255,.08);background:#0E0E0F;position:sticky;top:0;z-index:100}
+.tabs{display:flex;max-width:1280px;margin:0 auto;padding:0 40px}
+.tab{padding:14px 20px;font-size:13px;font-weight:500;color:rgba(255,255,255,.4);cursor:pointer;border-bottom:2px solid transparent;transition:all .15s;white-space:nowrap}
+.tab:hover{color:rgba(255,255,255,.7)}
+.tab.active{color:#F04E23;border-bottom-color:#F04E23}
+
+/* ── Panels ── */
+.panel{display:none;padding:28px 0 48px}
+.panel.active{display:block}
+
+/* ── Page header ── */
+.page-title{font-family:'Teko',sans-serif;font-size:28px;font-weight:400;color:#F04E23;letter-spacing:.04em;text-transform:uppercase;margin-bottom:3px}
+.page-sub{font-size:12px;color:rgba(255,255,255,.35);margin-bottom:20px}
+
+/* ── Flow diagram ── */
+#flow-svg-wrap{overflow-x:visible;overflow-y:visible;padding-bottom:8px}
+#flow-svg-wrap svg{display:block;width:100%;height:auto}
+
+/* ── Legend ── */
+.legend{display:flex;gap:16px;flex-wrap:wrap;margin-bottom:20px;padding:12px 16px;border:1px solid rgba(255,255,255,.07);border-radius:8px}
+.legend-item{display:flex;align-items:center;gap:7px;font-size:11px;color:rgba(255,255,255,.5)}
+.ldot{width:8px;height:8px;border-radius:50%;flex-shrink:0}
+
+/* ── Screen grid ── */
+.grid{display:grid;grid-template-columns:repeat(3,1fr);gap:14px;margin-bottom:20px}
+.col-label{font-size:10px;font-weight:600;letter-spacing:.09em;text-transform:uppercase;margin-bottom:10px;padding-left:2px}
+.screen{border-radius:8px;padding:10px 12px;border:1px solid rgba(255,255,255,.07);background:rgba(28,29,33,1);cursor:pointer;transition:border-color .15s,background .15s;margin-bottom:5px;user-select:none}
+.screen:hover{border-color:rgba(255,255,255,.18)}
+.screen.active{border-color:var(--fc);background:var(--fb)}
+.s-header{display:flex;justify-content:space-between;align-items:center;margin-bottom:3px}
+.s-id{font-size:10px;color:rgba(255,255,255,.3);font-family:'Space Mono',monospace}
+.s-built{font-size:9px;padding:1px 6px;border-radius:3px;background:rgba(240,78,35,.18);color:#F04E23;font-weight:500}
+.s-todo{font-size:9px;padding:1px 6px;border-radius:3px;background:rgba(255,255,255,.07);color:rgba(255,255,255,.3);font-weight:500}
+.s-name{font-family:'Teko',sans-serif;font-size:17px;color:#fff;margin-bottom:2px;letter-spacing:.02em;line-height:1.1}
+.s-note{font-size:11px;color:rgba(255,255,255,.42);line-height:1.4}
+.conn{width:1px;height:5px;background:rgba(255,255,255,.1);margin-left:18px}
+
+/* ── Detail panel ── */
+.detail{border:1px solid rgba(255,255,255,.07);border-radius:10px;padding:20px;background:rgba(28,29,33,1);min-height:90px;margin-top:4px}
+.detail.on{border-color:var(--fc);background:var(--fb)}
+.d-title{font-family:'Teko',sans-serif;font-size:22px;color:#fff;letter-spacing:.02em;margin-bottom:4px}
+.d-meta{font-size:11px;color:rgba(255,255,255,.28);font-family:'Space Mono',monospace;margin-bottom:10px}
+.d-note{font-size:12px;color:rgba(255,255,255,.5);padding:7px 11px;border-radius:6px;border:1px solid rgba(255,255,255,.07);background:rgba(0,0,0,.2);margin-bottom:12px}
+.d-grid{display:grid;grid-template-columns:1fr 1fr;gap:16px}
+.sec{font-size:10px;font-weight:600;text-transform:uppercase;letter-spacing:.08em;color:rgba(255,255,255,.28);margin-bottom:6px}
+.story{font-size:12px;color:rgba(255,255,255,.6);line-height:1.55;padding:4px 0;border-bottom:1px solid rgba(255,255,255,.05)}
+.story:last-child{border-bottom:none}
+.nitem{font-size:12px;padding:5px 10px;border-radius:6px;border:1px solid rgba(255,255,255,.09);color:rgba(255,255,255,.4);background:rgba(0,0,0,.15);margin-bottom:5px;cursor:default}
+.nitem.cl{cursor:pointer;color:var(--fc)}
+.placeholder{font-size:13px;color:rgba(255,255,255,.28);text-align:center;padding:24px 0}
+
+/* ── IA changes section ── */
+.changes{display:grid;grid-template-columns:repeat(3,1fr);gap:14px;margin-top:20px}
+.change-card{background:rgba(28,29,33,1);border:1px solid rgba(255,255,255,.07);border-radius:10px;padding:16px}
+.change-card h3{font-family:'Teko',sans-serif;font-size:18px;font-weight:400;color:#fff;margin-bottom:8px;letter-spacing:.02em}
+.change-card p{font-size:12px;color:rgba(255,255,255,.5);line-height:1.6}
+.tag{display:inline-block;font-size:10px;padding:2px 7px;border-radius:10px;margin-bottom:8px;font-weight:500}
+.tag-updated{background:rgba(45,127,249,.15);color:#2D7FF9}
+.tag-new{background:rgba(46,204,113,.15);color:#2ECC71}
+.tag-removed{background:rgba(239,68,68,.15);color:#ef4444}
+</style>
+</head>
+<body>
+
+<div class="tab-bar">
+  <div class="tabs">
+    <div class="tab active" onclick="showTab('flow')">Transition diagram</div>
+    <div class="tab" onclick="showTab('ia')">Screens & User stories</div>
+    <div class="tab" onclick="showTab('changes')">IA changes</div>
+  </div>
+</div>
+
+<!-- ══════════════════════════════════════════
+     TAB 1 — FLOW DIAGRAM
+══════════════════════════════════════════════ -->
+<div class="panel active" id="tab-flow">
+  <div class="wrap">
+    <div class="page-title">Screen transition diagram</div>
+    <div class="page-sub" id="flow-sub">Torque Connect · all screen-to-screen transitions · click any node to view details</div>
+    <div id="flow-svg-wrap"></div>
+  </div>
+</div>
+
+<!-- ══════════════════════════════════════════
+     TAB 2 — IA + USER STORIES
+══════════════════════════════════════════════ -->
+<div class="panel" id="tab-ia">
+  <div class="wrap">
+    <div class="page-title">Information Architecture</div>
+    <div class="page-sub" id="ia-count"></div>
+    <div class="legend">
+      <div class="legend-item"><span class="ldot" style="background:#534AB7"></span>Entry & Auth</div>
+      <div class="legend-item"><span class="ldot" style="background:#0F6E56"></span>Equipment & Workout</div>
+      <div class="legend-item"><span class="ldot" style="background:#185FA5"></span>Journal & Knowledge</div>
+      <div class="legend-item" style="margin-left:auto">
+        <span style="width:8px;height:8px;border-radius:2px;background:rgba(240,78,35,.6);display:inline-block"></span>&nbsp;Built
+        <span style="width:8px;height:8px;border-radius:2px;background:rgba(255,255,255,.15);display:inline-block;margin-left:10px"></span>&nbsp;To build
+      </div>
+    </div>
+    <div class="grid" id="ia-grid"></div>
+    <div class="detail" id="ia-detail"><div class="placeholder">Click any screen to see user stories and navigation</div></div>
+  </div>
+</div>
+
+<!-- ══════════════════════════════════════════
+     TAB 3 — IA CHANGES
+══════════════════════════════════════════════ -->
+<div class="panel" id="tab-changes">
+  <div class="wrap">
+    <div class="page-title">IA changes</div>
+    <div class="page-sub">What changed from original Figma spec → current prototype</div>
+
+    <div class="changes" id="changes-grid"></div>
+  </div>
+</div>
+
+<script>
+/* ═══════════════════════════════════════════════════════
+   DATA
+═══════════════════════════════════════════════════════ */
+const FLOWS = {
+  entry:    { label:'Entry & Auth',        color:'#534AB7', bg:'rgba(83,74,183,.09)',  screens:['SCR-00','SCR-01','SCR-07','SCR-08','SCR-02'] },
+  equipment:{ label:'Equipment & Workout', color:'#0F6E56', bg:'rgba(15,110,86,.09)',  screens:['SCR-03','SCR-03B','SCR-03C','SCR-03D','SCR-04','SCR-04B','SCR-09'] },
+  journal:  { label:'Journal & Knowledge', color:'#185FA5', bg:'rgba(45,127,249,.09)', screens:['SCR-05','SCR-05B','SCR-06','SCR-06B','SCR-06C','SCR-10','SCR-11'] },
+};
+
+const DATA = {
+  'SCR-00':{ name:'Password gate',          figma:'—',           flow:'entry',     status:'built',
+    notes:'Presentation gate only. Removed from production build.',
+    stories:[],
+    nav:['SCR-01'] },
+
+  'SCR-01':{ name:'Splash',                 figma:'262:6207',    flow:'entry',     status:'built',
+    notes:'START WORKOUT · I have an account · Sign up. Guest flow removed — START WORKOUT goes directly to NFC.',
+    stories:['As a new user, I want to sign up so I can start tracking workouts','As a returning user, I want to log in to access my history','As a user, I want START WORKOUT to immediately begin connecting equipment'],
+    nav:['SCR-03','SCR-07'] },
+
+  'SCR-07':{ name:'Sign up / Log in',       figma:'—',           flow:'entry',     status:'built',
+    notes:'Three states: Log in · Create account · Forgot password. Animated transitions between states.',
+    stories:['As a new user, I want to sign up','As a returning user, I want to log in','As a user, I want to restore my password'],
+    nav:['SCR-08','SCR-02','SCR-05'] },
+
+  'SCR-08':{ name:'Onboarding',             figma:'—',           flow:'entry',     status:'built',
+    notes:'3-step flow: Welcome → Bluetooth → Apple Health. Step dots indicator.',
+    stories:['As a new user, I want a short onboarding tutorial','As a user, I want to grant Apple Health permission','As a user, I want the app to prompt Bluetooth enable'],
+    nav:['SCR-02'] },
+
+  'SCR-02':{ name:'First entry (empty)',     figma:'262:5311',    flow:'entry',     status:'built',
+    notes:'Short Tutorial card (#2D7FF9) with phone+NFC image overlapping top edge. Watch button outlined.',
+    stories:['As a new user, I want a tutorial to learn how to connect','As a user, I want to explore exercises before first workout'],
+    nav:['SCR-03','SCR-06'] },
+
+  'SCR-03':{ name:'NFC — Tap to connect',   figma:'262:6286',    flow:'equipment', status:'built',
+    notes:'Pulsing rounded-square animation (r=16) behind NFC icon. Full upper area is tappable. Radial glow background from Figma.',
+    stories:['As a user, I want the app to prompt Bluetooth','As a user, I want to connect to Torque equipment by NFC tap'],
+    nav:['SCR-03B'] },
+
+  'SCR-03B':{ name:'BT scanning',           figma:'262:6248',    flow:'equipment', status:'built',
+    notes:'Fallback to Bluetooth. Auto-advances to device found after ~2.2s.',
+    stories:['As a user, I want automatic BT connection when NFC fails'],
+    nav:['SCR-03C'] },
+
+  'SCR-03C':{ name:'Device found + pairing',figma:'262:6262/6274',flow:'equipment',status:'built',
+    notes:'Two variants via demo toggle: TANK M1 / Relentless Ripper™ Pro. Device image + Found indicator.',
+    stories:['As a user, I want to pair with discovered Torque equipment'],
+    nav:['SCR-03D'] },
+
+  'SCR-03D':{ name:'Connected · START SESSION',figma:'262:6234', flow:'equipment', status:'built',
+    notes:'Animated checkmark. Device name. "Ready to record" state.',
+    stories:['As a user, I want confirmation that equipment is connected before starting'],
+    nav:['SCR-04'] },
+
+  'SCR-04':{ name:'Active workout',          figma:'262:5435',    flow:'equipment', status:'built',
+    notes:'Workout = list of sessions. Header: "Workout in Progress" + END + HR/Cal/Timer. Footer: connected device + "Connect Torque device" button. Each session has END SESSION button in live strip.',
+    stories:['As a user, I want to see all active sessions in one workout','As a user, I want to end individual sessions while keeping workout running','As a user, I want live metrics: force, HR, calories per session','As a user, I want to add another device mid-workout'],
+    nav:['SCR-04B','SCR-03'] },
+
+  'SCR-04B':{ name:'Finish modal',           figma:'262:6188',    flow:'equipment', status:'built',
+    notes:'"Before we finish" · Save results / End without saving. Figma exact: 402×241px bottom sheet.',
+    stories:['As a user, I want to save workout before finishing','As a user, I want to discard without saving'],
+    nav:['SCR-05'] },
+
+  'SCR-09':{ name:'Workout summary (guest)', figma:'—',           flow:'equipment', status:'built',
+    notes:'Guest-only endpoint. Results + Share + Create account CTA. Removed direct guest entry — reached only if session started without account.',
+    stories:['As a guest, I want to see my session summary','As a guest, I want to be prompted to create an account to save progress'],
+    nav:['SCR-07','SCR-01'] },
+
+  'SCR-05':{ name:'My Journal',              figma:'262:5384',    flow:'journal',   status:'built',
+    notes:'Chart with Week/Month/Year/Equipment filters. KPI row (Space Mono). Workout cards clickable → detail. START WORKOUT CTA.',
+    stories:['As a user, I want a dashboard with workout history and stats','As a user, I want to view recent workout sessions','As a user, I want Apple Health sync'],
+    nav:['SCR-03','SCR-05B','SCR-06'] },
+
+  'SCR-05B':{ name:'Workout detail',         figma:'262:5695',    flow:'journal',   status:'built',
+    notes:'Full session breakdown: force chart, progress bars with pattern texture, metric grid 2×3, Share button.',
+    stories:['As a user, I want detailed info about a specific session','As a user, I want to share workout results'],
+    nav:['SCR-05'] },
+
+  'SCR-06':{ name:'Training Knowledge',      figma:'262:5336',    flow:'journal',   status:'built',
+    notes:'Filter chips: Featured / Exercise / Guides / Equipment. Cards clickable → content detail.',
+    stories:['As a user, I want to browse a knowledge library','As a user, I want to filter content by equipment type'],
+    nav:['SCR-06B','SCR-05'] },
+
+  'SCR-06B':{ name:'Content detail',         figma:'—',           flow:'journal',   status:'built',
+    notes:'Workout plan steps list. Hero with device image. "Start guided workout" CTA at bottom.',
+    stories:['As a user, I want to view content details','As a user, I want to start a guided workout from the library'],
+    nav:['SCR-06C','SCR-06'] },
+
+  'SCR-06C':{ name:'Guided workout',         figma:'—',           flow:'journal',   status:'built',
+    notes:'Requires equipment connection. Shares WorkoutScreen with isGuided flag. Records metrics identically to free workout.',
+    stories:['As a user, I want Torque Connect to record performance during guided session'],
+    nav:['SCR-03','SCR-04'] },
+
+  'SCR-10':{ name:'Profile',                 figma:'—',           flow:'journal',   status:'built',
+    notes:'Account · Apple Health · Danger zone (delete account with modal confirmation).',
+    stories:['As a user, I want to view and update my profile','As a user, I want to delete my account'],
+    nav:[] },
+
+  'SCR-11':{ name:'Notifications',           figma:'—',           flow:'journal',   status:'built',
+    notes:'Unread indicator. Connection drop alerts with inline Reconnect CTA. Mark all read.',
+    stories:['As a user, I want to be notified if equipment connection drops'],
+    nav:['SCR-03'] },
+};
+
+const CHANGES = [
+  { tag:'updated', title:'Session vs Workout model',
+    text:'A Workout is a container for multiple Sessions. Each Session = one device activity (Tank PUSH, General activity from Apple Watch, Warm UP, etc.). WorkoutScreen shows a live journal of sessions — matching Figma frames 262:5435, 262:5522, 262:5616.' },
+  { tag:'updated', title:'Workout screen header',
+    text:'Header (180px) shows "Workout in Progress" + END button (63×44) + HR/Calories/Time metrics. "Workout journal" label separates header from session list. Matches Figma exactly.' },
+  { tag:'new', title:'END SESSION button',
+    text:'Live session strip has its own END SESSION button. Pressing it completes the session, adds it to the journal list above, and device status changes to "ready". Workout continues until END in header is pressed.' },
+  { tag:'updated', title:'Footer: Connect Torque device',
+    text:'Footer (146px): device status row (40px) + Connect Section with NFC icon (72px) + Home Indicator (34px). Matches Figma 262:5522 footer structure exactly.' },
+  { tag:'removed', title:'Guest flow removed from Splash',
+    text:'"Try as guest" button removed. START WORKOUT on Splash goes directly to NFC → Workout as an authenticated session. Guest summary screen (SCR-09) retained as fallback only.' },
+  { tag:'updated', title:'NFC tap animation',
+    text:'Replaced radial glow with 3 pulsing rounded squares (r=16, same as FAB). Each square expands from 64×64 to 180×180, border #2D7FF9 1.5px, opacity 0.55→0, staggered 0.68s delay.' },
+  { tag:'updated', title:'NavBar FAB',
+    text:'Exact Figma specs: w=64 h=64, r=16 (rounded square), fill=rgba(255,255,255,0.10), NO border. Positioned absolutely at left:169 top:-16 (Frame2 x=161 y=-24, FAB offset x=8 y=8). Eliminates flex glitch.' },
+  { tag:'updated', title:'Tutorial card (First Entry)',
+    text:'Short Tutorial card: 370×140px bg=#2D7FF9. Left column: "Short Tutorial" heading + subtitle + outlined Watch button. Right: tutorial_connect.png slightly overflows top edge for depth.' },
+  { tag:'new', title:'Pattern texture on progress bars',
+    text:'ProgressMetricRow bars have pattern.png (12×32 RGBA tile) overlaid with mixBlendMode:overlay, opacity:0.25. Adds texture depth to Force and Distance bars.' },
+  { tag:'updated', title:'Chart: vertical grid + dots',
+    text:'FigmaChart has 7 vertical lines (x=0,59,118,177,236,295,354) with gradient 0→0.6 opacity, 0.5px. Intersection dots (r=2.5, fill #F04E23, dark stroke) where line crosses vertical grid. Final point r=3.5 with white stroke.' },
+  { tag:'new', title:'All missing screens built',
+    text:'WorkoutDetail, WorkoutSummary, ContentDetail, GuidedWorkout, SignupLogin (3 states), Onboarding (3 steps), Profile (with delete modal), Notifications (with unread + reconnect CTA).' },
+  { tag:'updated', title:'NFC back navigation',
+    text:'prevScreen ref tracks origin before NFC. Back button returns to exact previous screen (Splash, Workout, or any tab). Fixes the bug where Back went to wrong screen.' },
+];
+
+/* ═══════════════════════════════════════════════════════
+   TAB SWITCHER
+═══════════════════════════════════════════════════════ */
+function showTab(t) {
+  document.querySelectorAll('.tab').forEach((el,i) => el.classList.toggle('active', ['flow','ia','changes'][i]===t));
+  document.querySelectorAll('.panel').forEach(el => el.classList.remove('active'));
+  document.getElementById('tab-'+t).classList.add('active');
+}
+
+/* ═══════════════════════════════════════════════════════
+   FLOW DIAGRAM
+═══════════════════════════════════════════════════════ */
+(function buildFlow() {
+  const layout = {
+    'SCR-00':{cx:0,cy:0},'SCR-01':{cx:0,cy:1},'SCR-07':{cx:0,cy:2},'SCR-08':{cx:0,cy:3},'SCR-02':{cx:0,cy:4},
+    'SCR-03':{cx:1,cy:1},'SCR-03B':{cx:1,cy:2},'SCR-03C':{cx:1,cy:3},'SCR-03D':{cx:1,cy:4},'SCR-04':{cx:1,cy:5},'SCR-04B':{cx:1,cy:6},'SCR-09':{cx:1,cy:7},
+    'SCR-05':{cx:2,cy:3},'SCR-05B':{cx:2,cy:4},'SCR-06':{cx:2,cy:5},'SCR-06B':{cx:2,cy:6},'SCR-06C':{cx:2,cy:7},
+    'SCR-10':{cx:3,cy:5},'SCR-11':{cx:3,cy:6},
+  };
+
+  // 1200px wide (1280 wrap − 2×40px padding)
+  // 4 cols (cx 0-3): XPAD*2 + 3*XGAP + BW = 1200 → BW=240, XGAP=306
+  const BW=240, BH=52, XGAP=306, YGAP=72, XPAD=20, YTOP=58;
+  const maxCx=Math.max(...Object.values(layout).map(n=>n.cx));
+  const maxCy=Math.max(...Object.values(layout).map(n=>n.cy));
+  const W=XPAD*2+maxCx*XGAP+BW;  // 20+20+918+240 = 1198
+  const H=YTOP+maxCy*YGAP+BH+52;
+
+  function px(n){return XPAD+n.cx*XGAP;}
+  function py(n){return YTOP+n.cy*YGAP;}
+  function nb(id){const n=layout[id];if(!n)return null;return{x:px(n),y:py(n),cx:px(n)+BW/2,cy:py(n)+BH/2};}
+  const fc=id=>{const d=DATA[id];if(!d)return'#888';return{entry:'#534AB7',equipment:'#0F6E56',journal:'#185FA5'}[d.flow]||'#888';};
+
+  const HEADERS=[
+    {cx:0,label:'Entry & Auth',color:'#534AB7'},
+    {cx:1,label:'Equipment & Workout',color:'#0F6E56'},
+    {cx:2,label:'Journal & Knowledge',color:'#185FA5'},
+    {cx:3,label:'Misc',color:'#888'},
+  ];
+
+  const EDGES=[
+    ['SCR-00','SCR-01','down'],['SCR-01','SCR-07','down'],['SCR-07','SCR-08','down'],['SCR-08','SCR-02','down'],
+    ['SCR-01','SCR-03','cross'],['SCR-02','SCR-03','cross2'],
+    ['SCR-03','SCR-03B','down'],['SCR-03B','SCR-03C','down'],['SCR-03C','SCR-03D','down'],['SCR-03D','SCR-04','down'],['SCR-04','SCR-04B','down'],['SCR-04B','SCR-09','down'],
+    ['SCR-04B','SCR-05','cross-eq'],
+    ['SCR-09','SCR-01','back-long'],
+    ['SCR-04','SCR-03','self-loop'],
+    ['SCR-05','SCR-05B','down'],['SCR-06','SCR-06B','down'],['SCR-06B','SCR-06C','down'],
+    ['SCR-05','SCR-06','skip'],
+    ['SCR-05','SCR-03','jn-eq'],['SCR-06C','SCR-03','jn-eq2'],
+    ['SCR-11','SCR-03','side-long'],
+  ];
+
+  let svg=`<svg xmlns="http://www.w3.org/2000/svg" width="${W}" height="${H}" viewBox="0 0 ${W} ${H}">
+<defs>
+  <marker id="a0" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="5" markerHeight="5" orient="auto-start-reverse"><path d="M2 1L8 5L2 9" fill="none" stroke="rgba(255,255,255,0.28)" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></marker>
+  <marker id="ao" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="5" markerHeight="5" orient="auto-start-reverse"><path d="M2 1L8 5L2 9" fill="none" stroke="#F04E23" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></marker>
+  <marker id="ab" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="5" markerHeight="5" orient="auto-start-reverse"><path d="M2 1L8 5L2 9" fill="none" stroke="rgba(45,127,249,0.8)" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></marker>
+</defs>`;
+
+  // Column lanes
+  HEADERS.forEach(h=>{
+    const x=XPAD+h.cx*XGAP-12;
+    svg+=`<rect x="${x}" y="30" width="${BW+24}" height="${H-52}" rx="12" fill="${h.color}" fill-opacity="0.04" stroke="${h.color}" stroke-opacity="0.13" stroke-width="1"/>`;
+    svg+=`<text x="${x+(BW+24)/2}" y="22" text-anchor="middle" font-family="Inter,sans-serif" font-size="11" font-weight="600" fill="${h.color}" opacity="0.9">${h.label.toUpperCase()}</text>`;
+  });
+
+  // Edges
+  EDGES.forEach(([a,b,type])=>{
+    const na=nb(a), nb2=nb(b); if(!na||!nb2)return;
+    let path='',stroke='rgba(255,255,255,0.2)',sw=1.5,dash='',marker='url(#a0)';
+    if(type==='down'){
+      path=`M${na.cx},${na.y+BH} L${nb2.cx},${nb2.y}`;
+    } else if(type==='skip'){
+      path=`M${na.cx},${na.y+BH} L${nb2.cx},${nb2.y}`;
+      stroke='rgba(255,255,255,0.1)';sw=1;dash='5,4';
+    } else if(type==='cross'){
+      stroke='#F04E23';sw=1.8;marker='url(#ao)';
+      path=`M${na.x+BW},${na.cy} C${na.x+BW+44},${na.cy} ${nb2.x-44},${nb2.cy} ${nb2.x},${nb2.cy}`;
+    } else if(type==='cross2'){
+      stroke='rgba(240,78,35,0.5)';sw=1;marker='url(#ao)';dash='5,4';
+      path=`M${na.x+BW},${na.cy} C${na.x+BW+36},${na.cy} ${nb2.x-36},${nb2.cy} ${nb2.x},${nb2.cy}`;
+    } else if(type==='cross-eq'){
+      stroke='#F04E23';sw=1.8;marker='url(#ao)';
+      path=`M${na.x+BW},${na.cy} C${na.x+BW+44},${na.cy} ${nb2.x-44},${nb2.cy} ${nb2.x},${nb2.cy}`;
+    } else if(type==='jn-eq'){
+      stroke='rgba(45,127,249,0.55)';sw=1;dash='4,4';marker='url(#ab)';
+      path=`M${na.x},${na.cy} C${na.x-44},${na.cy} ${nb2.x+BW+44},${nb2.cy} ${nb2.x+BW},${nb2.cy}`;
+    } else if(type==='jn-eq2'){
+      stroke='rgba(45,127,249,0.38)';sw=1;dash='4,4';marker='url(#ab)';
+      path=`M${na.x},${na.cy} C${na.x-54},${na.cy} ${nb2.x+BW+54},${nb2.cy} ${nb2.x+BW},${nb2.cy}`;
+    } else if(type==='back-long'){
+      stroke='rgba(240,78,35,0.3)';sw=1;dash='5,5';marker='url(#ao)';
+      const lx=XPAD-14;
+      path=`M${na.x},${na.cy} L${lx},${na.cy} L${lx},${nb2.cy} L${nb2.x},${nb2.cy}`;
+    } else if(type==='self-loop'){
+      // SCR-04 → SCR-03 (connect new device)
+      stroke='rgba(45,127,249,0.4)';sw=1;dash='4,4';marker='url(#ab)';
+      const lx=nb2.x+BW+22;
+      path=`M${nb2.x+BW},${nb2.cy} L${lx},${nb2.cy} L${lx},${na.cy} L${na.x+BW},${na.cy}`;
+    } else if(type==='side-long'){
+      stroke='rgba(255,255,255,0.1)';sw=1;dash='4,4';
+      path=`M${na.x},${na.cy} L${na.x-16},${na.cy} L${na.x-16},${nb2.cy} L${nb2.x+BW},${nb2.cy}`;
+    }
+    if(!path)return;
+    const da=dash?`stroke-dasharray="${dash}"`:'';
+    svg+=`<path d="${path}" fill="none" stroke="${stroke}" stroke-width="${sw}" ${da} marker-end="${marker}"/>`;
+  });
+
+  // Nodes
+  Object.entries(layout).forEach(([id,n])=>{
+    const d=DATA[id];if(!d)return;
+    const x=px(n),y=py(n),c=fc(id),built=d.status==='built';
+    svg+=`<g data-id="${id}" onclick="nodeClick('${id}')" style="cursor:pointer">
+      <rect x="${x}" y="${y}" width="${BW}" height="${BH}" rx="9"
+        fill="${c}" fill-opacity="${built?.14:.05}"
+        stroke="${c}" stroke-opacity="${built?.65:.25}" stroke-width="1"/>`;
+    if(built) svg+=`<circle cx="${x+BW-12}" cy="${y+13}" r="3.5" fill="#F04E23" opacity="0.85"/>`;
+    svg+=`<text x="${x+12}" y="${y+15}" font-family="Space Mono,monospace" font-size="10" fill="${c}" fill-opacity="0.65">${id}</text>`;
+    // Wider boxes can show more chars
+    const nm=d.name.length>28?d.name.slice(0,26)+'…':d.name;
+    svg+=`<text x="${x+BW/2}" y="${y+36}" text-anchor="middle" font-family="Teko,sans-serif" font-size="17" fill="rgba(255,255,255,0.92)">${nm}</text>`;
+    svg+=`</g>`;
+  });
+
+  // Legend
+  const ly=H-28;
+  svg+=`<circle cx="${XPAD+4}" cy="${ly}" r="3.5" fill="#F04E23" opacity="0.85"/>`;
+  svg+=`<text x="${XPAD+14}" y="${ly+4}" font-family="Inter,sans-serif" font-size="11" fill="rgba(255,255,255,0.4)">Built</text>`;
+  svg+=`<line x1="${XPAD+70}" y1="${ly}" x2="${XPAD+96}" y2="${ly}" stroke="#F04E23" stroke-width="1.5"/>`;
+  svg+=`<text x="${XPAD+103}" y="${ly+4}" font-family="Inter,sans-serif" font-size="11" fill="rgba(255,255,255,0.4)">Auth → Equipment</text>`;
+  svg+=`<line x1="${XPAD+272}" y1="${ly}" x2="${XPAD+298}" y2="${ly}" stroke="rgba(45,127,249,0.7)" stroke-width="1.5" stroke-dasharray="4,4"/>`;
+  svg+=`<text x="${XPAD+305}" y="${ly+4}" font-family="Inter,sans-serif" font-size="11" fill="rgba(255,255,255,0.4)">Journal → Equipment</text>`;
+  svg+=`<line x1="${XPAD+504}" y1="${ly}" x2="${XPAD+530}" y2="${ly}" stroke="rgba(45,127,249,0.4)" stroke-width="1.5" stroke-dasharray="4,4"/>`;
+  svg+=`<text x="${XPAD+537}" y="${ly+4}" font-family="Inter,sans-serif" font-size="11" fill="rgba(255,255,255,0.4)">Add device mid-workout</text>`;
+  svg+=`</svg>`;
+
+  document.getElementById('flow-svg-wrap').innerHTML=svg;
+
+  window.nodeClick=function(id){
+    showTab('ia');
+    setTimeout(()=>{
+      const el=document.querySelector(`[data-screen-id="${id}"]`);
+      if(el){el.scrollIntoView({behavior:'smooth',block:'center'});el.click();}
+    },160);
+  };
+})();
+
+/* ═══════════════════════════════════════════════════════
+   IA SCREEN LIST
+═══════════════════════════════════════════════════════ */
+(function buildIA(){
+  const total=Object.keys(DATA).length;
+  const built=Object.values(DATA).filter(d=>d.status==='built').length;
+  document.getElementById('ia-count').textContent=`${total} screens · ${built} built · ${total-built} to build · click any screen for user stories & navigation`;
+
+  const grid=document.getElementById('ia-grid');
+  let activeId=null;
+
+  Object.entries(FLOWS).forEach(([fid,flow])=>{
+    const col=document.createElement('div');
+    col.innerHTML=`<div class="col-label" style="color:${flow.color}">${flow.label}</div>`;
+    flow.screens.forEach((sid,i)=>{
+      const d=DATA[sid]; if(!d)return;
+      const el=document.createElement('div');
+      el.className='screen'; el.dataset.screenId=sid;
+      el.style.setProperty('--fc',flow.color); el.style.setProperty('--fb',flow.bg);
+      el.innerHTML=`
+        <div class="s-header">
+          <span class="s-id">${sid}</span>
+          <span class="${d.status==='built'?'s-built':'s-todo'}">${d.status}</span>
+        </div>
+        <div class="s-name">${d.name}</div>
+        <div class="s-note">${d.notes.split('.')[0]}</div>`;
+      el.onclick=()=>{
+        if(activeId===sid){activeId=null;renderDetail(null,null);document.querySelectorAll('.screen').forEach(s=>s.classList.remove('active'));return;}
+        activeId=sid;
+        document.querySelectorAll('.screen').forEach(s=>s.classList.toggle('active',s.dataset.screenId===sid));
+        renderDetail(d,flow);
+      };
+      col.appendChild(el);
+      if(i<flow.screens.length-1){const c=document.createElement('div');c.className='conn';col.appendChild(c);}
+    });
+    grid.appendChild(col);
+  });
+
+  function renderDetail(d,flow){
+    const det=document.getElementById('ia-detail');
+    if(!d){det.className='detail';det.innerHTML='<div class="placeholder">Click any screen to see user stories and navigation</div>';return;}
+    det.className='detail on';det.style.setProperty('--fc',flow.color);det.style.setProperty('--fb',flow.bg);
+    const stories=d.stories.length
+      ?d.stories.map(s=>`<div class="story">· ${s}</div>`).join('')
+      :'<div class="story" style="color:rgba(255,255,255,.22)">No user stories mapped</div>';
+    const navHtml=d.nav.map(tid=>{
+      const td=DATA[tid];if(!td)return'';
+      const tf=Object.values(FLOWS).find(f=>f.screens.includes(tid));
+      return `<div class="nitem cl" style="--fc:${tf?.color||'#888'}" onclick="jumpTo('${tid}')">→ ${tid}: ${td.name}</div>`;
+    }).join('')||'<div class="nitem">No outgoing transitions</div>';
+    det.innerHTML=`
+      <div style="display:flex;align-items:baseline;gap:10px;margin-bottom:6px">
+        <div class="d-title">${d.name}</div>
+        <div class="d-meta">${activeId} · figma: ${d.figma}</div>
+      </div>
+      <div class="d-note">${d.notes}</div>
+      <div class="d-grid">
+        <div><div class="sec">User stories (${d.stories.length})</div>${stories}</div>
+        <div><div class="sec">Transitions from this screen</div>${navHtml}</div>
+      </div>`;
+  }
+
+  window.jumpTo=function(id){
+    const el=document.querySelector(`[data-screen-id="${id}"]`);
+    if(el){el.scrollIntoView({behavior:'smooth',block:'center'});el.click();}
+  };
+})();
+
+/* ═══════════════════════════════════════════════════════
+   CHANGES TAB
+═══════════════════════════════════════════════════════ */
+(function buildChanges(){
+  const tagLabel={'updated':'Updated','new':'New','removed':'Removed'};
+  const tagClass={'updated':'tag-updated','new':'tag-new','removed':'tag-removed'};
+  const grid=document.getElementById('changes-grid');
+  CHANGES.forEach(c=>{
+    const div=document.createElement('div');
+    div.className='change-card';
+    div.innerHTML=`
+      <div><span class="tag ${tagClass[c.tag]}">${tagLabel[c.tag]}</span></div>
+      <h3>${c.title}</h3>
+      <p>${c.text}</p>`;
+    grid.appendChild(div);
+  });
+})();
+</script>
+</body>
+</html>
