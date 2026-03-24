@@ -33,9 +33,10 @@ export default function SplashScreen({ onStartWorkout, onLogin, onSignup }) {
       background:'linear-gradient(180deg,#1C1D21 0%,#0E0E0F 100%)' }}>
       <StatusBar/>
 
-      {/* Figma: Splash Content x=0 y=54 h=581 padding l=16 r=16 CENTER */}
+      {/* Content centred above buttons */}
       <div style={{
-        position:'absolute', top:'var(--status-h, 54px)', left:16, right:16, height:581,
+        position:'absolute', top:'var(--status-h, 54px)', left:16, right:16,
+        bottom:'calc(env(safe-area-inset-bottom, 0px) + 200px)',
         display:'flex', flexDirection:'column', alignItems:'center', justifyContent:'center', gap:32,
       }}>
         {/* Logo: Figma 166×92px */}
@@ -65,16 +66,19 @@ export default function SplashScreen({ onStartWorkout, onLogin, onSignup }) {
         >Track your performance.&nbsp; Own your results.</motion.div>
       </div>
 
-      {/* Figma: Splash Buttons x=16 y=635 w=370 gap=16 VERTICAL */}
+      {/* Buttons — pushed to bottom with margin-top auto */}
       <motion.div
         initial={{ opacity:0, y:24 }} animate={{ opacity:1, y:0 }}
         transition={{ delay:0.42, duration:0.5 }}
-        style={{ position:'absolute', top:635, left:16, width:'100%',
-          display:'flex', flexDirection:'column', gap:16 }}
+        style={{
+          position:'absolute', bottom:0, left:0, right:0,
+          padding:'0 16px',
+          paddingBottom:'calc(env(safe-area-inset-bottom, 0px) + 32px)',
+          display:'flex', flexDirection:'column', gap:16,
+        }}
       >
         <Btn label="START WORKOUT" onClick={onStartWorkout} variant="primary"/>
         <Btn label="I have an account" onClick={onLogin} variant="outline"/>
-        {/* Figma: Divider opacity=24% */}
         <div style={{ opacity:0.24, height:1,
           background:'linear-gradient(90deg,transparent,#fff 50%,transparent)' }}/>
         <Btn label="Sign up" onClick={onSignup} variant="ghost"/>

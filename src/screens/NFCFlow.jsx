@@ -114,29 +114,24 @@ function NFCBox({ isConnecting, onTap }) {
         position: 'relative',
         cursor: 'pointer',
         overflow: 'visible',
+        display: 'flex', flexDirection: 'column',
+        alignItems: 'center', justifyContent: 'center',
+        gap: 12,
       }}
     >
       <AnimatedBorder w={boxW} h={300} r={8} isConnecting={isConnecting}/>
 
-      {/* NFC icon — always centred */}
+      {/* NFC icon — centred via flex */}
       <motion.div
         animate={isConnecting ? { scale: [1, 1.06, 1] } : {}}
         transition={{ repeat: Infinity, duration: 1.4, ease: 'easeInOut' }}
-        style={{
-          position: 'absolute',
-          left: '50%', top: 64,
-          transform: 'translateX(-50%)',
-          width: 64, height: 64,
-        }}
+        style={{ width: 64, height: 64, flexShrink: 0 }}
       >
         <NfcIcon size={64} color={isConnecting ? '#fff' : '#2D7FF9'}/>
       </motion.div>
 
-      {/* "Tap to connect" — Figma y=144 Teko 32px */}
-      <div style={{
-        position: 'absolute', top: 144, left: 16, right: 16,
-        textAlign: 'center',
-      }}>
+      {/* Text block — centred */}
+      <div style={{ textAlign: 'center', padding: '0 16px' }}>
         <div style={{
           fontFamily: 'Teko, sans-serif', fontSize: 32, fontWeight: 400,
           color: '#fff', textTransform: 'uppercase', letterSpacing: '0.04em',
@@ -144,7 +139,6 @@ function NFCBox({ isConnecting, onTap }) {
         }}>
           {isConnecting ? 'Connecting…' : 'Tap to connect'}
         </div>
-        {/* Subheading — Figma y=196 Inter 15px */}
         <div style={{
           fontFamily: 'Inter, sans-serif', fontSize: 15, fontWeight: 300,
           color: 'rgba(255,255,255,0.55)', lineHeight: '22px',

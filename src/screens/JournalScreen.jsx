@@ -59,8 +59,8 @@ export default function JournalScreen({ onStartWorkout, onOpenDetail, activeTab,
                 lineHeight:'1.4', flex:1 }}>
                 Progress<br/>Peak Force
               </span>
-              {/* Tabs: full width */}
-              <div style={{ height:40, borderRadius:8, background:'rgba(0,0,0,0.5)',
+              {/* Tabs: flex:2 so wider than label */}
+              <div style={{ flex:2, height:40, borderRadius:8, background:'rgba(0,0,0,0.5)',
                 padding:4, display:'flex', gap:2 }}>
                 {FILTERS.map(f => {
                   const a = filter===f

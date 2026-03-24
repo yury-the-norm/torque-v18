@@ -525,7 +525,8 @@ function FinishModal({ onSave, onDiscard }) {
             End without saving
           </motion.button>
         </div>
-        <HomeIndicator/>
+        {/* Safe area padding at bottom */}
+        <div style={{ height:'max(env(safe-area-inset-bottom, 0px), 16px)' }}/>
       </motion.div>
     </motion.div>
   )
@@ -635,7 +636,7 @@ export default function WorkoutScreen({ device, onFinish, onConnectNew }) {
       <div className="scroll" style={{
         position:'absolute', top:'calc(var(--status-h, 54px) + 180px)', left:0, right:0, bottom:146,
         overflowY:'auto', display:'flex', flexDirection:'column',
-        alignItems:'center', gap:12, padding:'16px 0' }}>
+        alignItems:'center', gap:12, padding:'16px 16px' }}>
 
         {/* 🔴 ACTIVE session at top */}
         {liveRunning && (
