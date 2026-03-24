@@ -35,7 +35,7 @@ export default function FirstEntryScreen({ onStartWorkout, activeTab, onTabChang
 
           {/* Journal empty state */}
           <motion.div initial={{opacity:0,y:12}} animate={{opacity:1,y:0}} transition={{delay:0.08}}
-            style={{ width:370, borderRadius:8, background:'#1C1D21', padding:16,
+            style={{ width:'100%', borderRadius:8, background:'#1C1D21', padding:16,
               display:'flex', flexDirection:'column', gap:8 }}>
             <div style={{ fontFamily:'Teko,sans-serif', fontSize:26, fontWeight:400,
               color:'#fff', lineHeight:'30px' }}>My Journal</div>
@@ -52,7 +52,7 @@ export default function FirstEntryScreen({ onStartWorkout, activeTab, onTabChang
           ─────────────────────────────────────────────────────── */}
           <motion.div initial={{opacity:0,y:12}} animate={{opacity:1,y:0}} transition={{delay:0.14}}
             style={{
-              width:370, height:140, borderRadius:8,
+              width:'100%', height:140, borderRadius:8,
               background:'#2D7FF9',
               position:'relative', overflow:'hidden',
               flexShrink:0,
@@ -102,7 +102,7 @@ export default function FirstEntryScreen({ onStartWorkout, activeTab, onTabChang
 
           {/* Explore exercises */}
           <motion.div initial={{opacity:0,y:12}} animate={{opacity:1,y:0}} transition={{delay:0.2}}
-            style={{ width:370, borderRadius:8, background:'#1C1D21', padding:16,
+            style={{ width:'100%', borderRadius:8, background:'#1C1D21', padding:16,
               display:'flex', justifyContent:'space-between', alignItems:'center' }}>
             <div style={{ flex:1 }}>
               <div style={{ fontFamily:'Teko,sans-serif', fontSize:26, fontWeight:400,
@@ -131,7 +131,7 @@ export default function FirstEntryScreen({ onStartWorkout, activeTab, onTabChang
             onClick={onStartWorkout}
             whileHover={{ scale:1.02, filter:'brightness(1.1)' }}
             whileTap={{ scale:0.97 }}
-            style={{ width:370, height:44, borderRadius:6,
+            style={{ width:'100%', height:44, borderRadius:6,
               background:'#F04E23', border:'none',
               fontFamily:'Teko,sans-serif', fontSize:24, fontWeight:500,
               letterSpacing:'1.1px', color:'#fff', cursor:'pointer' }}>

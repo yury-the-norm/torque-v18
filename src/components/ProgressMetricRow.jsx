@@ -4,7 +4,7 @@ import patternImg from '../assets/pattern.png'
 export default function ProgressMetricRow({ label, value, barWidth, barColor }) {
   return (
     <div style={{
-      width: 'var(--card-w, 354px)',
+      width: '100%',
       height: 28, borderRadius: 2,
       background: 'rgba(255,255,255,0.05)',
       position: 'relative',

@@ -3,6 +3,7 @@ import { motion, AnimatePresence } from 'framer-motion'
 import StatusBar from '../components/StatusBar.jsx'
 import NavBar from '../components/NavBar.jsx'
 import FigmaChart from '../components/FigmaChart.jsx'
+import ResponsiveChart from '../components/ResponsiveChart.jsx'
 import ProgressMetricRow from '../components/ProgressMetricRow.jsx'
 import tankImg from '../assets/tank_m1.png'
 
@@ -48,17 +49,18 @@ export default function JournalScreen({ onStartWorkout, onOpenDetail, activeTab,
             color:'#F04E23', lineHeight:'36px' }}>My Journal</div>
 
           {/* Chart card: w=370 r=8 bg=#1C1D21 p l=8 r=8 t=16 b=16 gap=16 */}
-          <div style={{ width:"var(--card-w, 370px)", borderRadius:8, background:'#1C1D21',
+          <div style={{ width:"100%", borderRadius:8, background:'#1C1D21',
             padding:'16px 8px', display:'flex', flexDirection:'column', gap:16 }}>
 
-            {/* Header row: title + filter tabs */}
-            <div style={{ width:"var(--chart-w, 354px)", display:'flex', alignItems:'center', justifyContent:'space-between' }}>
+            {/* Header row: title wraps, tabs fixed width */}
+            <div style={{ display:'flex', alignItems:'center', justifyContent:'space-between', gap:12 }}>
               <span style={{ fontFamily:'Inter,sans-serif', fontSize:13, fontWeight:300,
-                color:'rgba(255,255,255,0.55)', textTransform:'uppercase', letterSpacing:'0.06em' }}>
-                Progress Peak Force
+                color:'rgba(255,255,255,0.55)', textTransform:'uppercase', letterSpacing:'0.06em',
+                lineHeight:'1.4', flex:1 }}>
+                Progress<br/>Peak Force
               </span>
-              {/* Tabs: w=165 h=40 r=8 bg dark p=4 gap=2 */}
-              <div style={{ width:165, height:40, borderRadius:8, background:'rgba(0,0,0,0.5)',
+              {/* Tabs: full width */}
+              <div style={{ height:40, borderRadius:8, background:'rgba(0,0,0,0.5)',
                 padding:4, display:'flex', gap:2 }}>
                 {FILTERS.map(f => {
                   const a = filter===f
@@ -84,7 +86,7 @@ export default function JournalScreen({ onStartWorkout, onOpenDetail, activeTab,
               <motion.div key={filter}
                 initial={{opacity:0, x:16}} animate={{opacity:1, x:0}} exit={{opacity:0, x:-16}}
                 transition={{duration:0.3, ease:[0.32,0.72,0,1]}}>
-                <FigmaChart data={chartData} width={354} height={160} labels={chartLabels}/>
+                <ResponsiveChart data={chartData} height={160} labels={chartLabels}/>
               </motion.div>
             </AnimatePresence>
 
@@ -106,7 +108,7 @@ export default function JournalScreen({ onStartWorkout, onOpenDetail, activeTab,
             whileHover={{ scale:1.02, filter:'brightness(1.1)' }}
             whileTap={{ scale:0.97 }}
             style={{
-              width:"var(--card-w, 370px)", height:44, borderRadius:6, background:'#F04E23', border:'none',
+              width:"100%", height:44, borderRadius:6, background:'#F04E23', border:'none',
               fontFamily:'Teko,sans-serif', fontSize:24, fontWeight:500,
               letterSpacing:'1.1px', color:'#fff', cursor:'pointer', textTransform:'uppercase' }}>
             START WORKOUT
@@ -123,7 +125,7 @@ export default function JournalScreen({ onStartWorkout, onOpenDetail, activeTab,
               initial={{opacity:0,y:10}} animate={{opacity:1,y:0}} transition={{delay:i*0.07}}
               whileHover={{ scale:1.01, borderColor:'rgba(255,255,255,0.14)' }}
               whileTap={{ scale:0.98 }}
-              style={{ width:"var(--card-w, 370px)", borderRadius:8, background:'#1C1D21',
+              style={{ width:"100%", borderRadius:8, background:'#1C1D21',
                 padding:8, display:'flex', flexDirection:'column', gap:8,
                 cursor:'pointer', border:'1px solid rgba(255,255,255,0.06)' }}
               onClick={() => onOpenDetail && onOpenDetail(w)}>

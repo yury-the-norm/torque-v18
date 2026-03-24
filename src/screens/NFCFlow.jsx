@@ -93,30 +93,39 @@ function AnimatedBorder({ w = 370, h = 300, r = 8, isConnecting = false }) {
 }
 
 /* ── NFC Container box ────────────────────────────── */
-/* Figma: 370×300 r=8 bg=#1C1D21, icon centred at x=153 y=64 */
 function NFCBox({ isConnecting, onTap }) {
+  const ref = React.useRef()
+  const [boxW, setBoxW] = React.useState(370)
+  React.useEffect(() => {
+    if (!ref.current) return
+    const ro = new ResizeObserver(entries => setBoxW(entries[0].contentRect.width))
+    ro.observe(ref.current)
+    return () => ro.disconnect()
+  }, [])
+
   return (
     <motion.div
+      ref={ref}
       onClick={onTap}
       whileTap={{ scale: 0.98 }}
       style={{
-        width: 370, height: 300, borderRadius: 8,
+        width: '100%', height: 300, borderRadius: 8,
         background: '#1C1D21',
         position: 'relative',
         cursor: 'pointer',
         overflow: 'visible',
       }}
     >
-      {/* Animated border */}
-      <AnimatedBorder w={370} h={300} r={8} isConnecting={isConnecting}/>
+      <AnimatedBorder w={boxW} h={300} r={8} isConnecting={isConnecting}/>
 
-      {/* NFC icon — centred x=153 y=64 */}
+      {/* NFC icon — always centred */}
       <motion.div
         animate={isConnecting ? { scale: [1, 1.06, 1] } : {}}
         transition={{ repeat: Infinity, duration: 1.4, ease: 'easeInOut' }}
         style={{
           position: 'absolute',
-          left: 153, top: 64,
+          left: '50%', top: 64,
+          transform: 'translateX(-50%)',
           width: 64, height: 64,
         }}
       >
@@ -156,36 +165,37 @@ function TapToConnect({ onTap, onCantFind, onBack }) {
     <motion.div key="tap"
       initial={{ opacity:0, x:40 }} animate={{ opacity:1, x:0 }}
       exit={{ opacity:0, x:-40 }} transition={PAGE}
-      style={{ position:'absolute', inset:0 }}>
+      style={{
+        position:'absolute', inset:0,
+        display:'flex', flexDirection:'column',
+        padding:'16px 16px 0',
+      }}>
 
-      {/* Figma: NFC Container at x=16 y=8 */}
-      <div style={{ position:'absolute', top:8, left:16 }}>
-        <NFCBox isConnecting={false} onTap={onTap}/>
-      </div>
+      {/* NFC Box — full width */}
+      <NFCBox isConnecting={false} onTap={onTap}/>
 
-      {/* "Bluetooth will activate automatically." — y=340 */}
+      {/* Text below box */}
       <div style={{
-        position:'absolute', top:340, left:0, right:0, textAlign:'center',
+        textAlign:'center', marginTop:24,
         fontFamily:'Inter,sans-serif', fontSize:13, fontWeight:300,
         color:'rgba(255,255,255,0.35)',
       }}>Bluetooth will activate automatically.</div>
 
-      {/* "Can't find the NFC tag?" — y=392 */}
       <motion.button onClick={onCantFind} whileTap={{ scale:0.96 }}
         style={{
-          position:'absolute', top:392, left:0, right:0,
-          background:'none', border:'none', cursor:'pointer',
+          marginTop:16, background:'none', border:'none', cursor:'pointer',
           fontFamily:'Inter,sans-serif', fontSize:14, fontWeight:300,
           color:'rgba(255,255,255,0.4)', textDecoration:'underline',
+          alignSelf:'center',
         }}>Can't find the NFC tag?</motion.button>
 
-      {/* Back — y=780 */}
+      {/* Back — pushed to bottom */}
       <motion.button onClick={onBack} whileTap={{ scale:0.96 }}
         style={{
-          position:'absolute', bottom:50, left:0, right:0,
-          background:'none', border:'none', cursor:'pointer',
-          fontFamily:'Teko,sans-serif', fontSize:24, fontWeight:400,
-          letterSpacing:'0.5px', color:'rgba(255,255,255,0.35)',
+          marginTop:'auto', marginBottom:24, background:'none', border:'none',
+          cursor:'pointer', fontFamily:'Teko,sans-serif', fontSize:24,
+          fontWeight:400, letterSpacing:'0.5px', color:'rgba(255,255,255,0.35)',
+          alignSelf:'center',
         }}>Back</motion.button>
     </motion.div>
   )
@@ -197,24 +207,27 @@ function ConnectingScreen({ onCancel }) {
     <motion.div key="connecting"
       initial={{ opacity:0 }} animate={{ opacity:1 }}
       exit={{ opacity:0 }} transition={PAGE}
-      style={{ position:'absolute', inset:0 }}>
+      style={{
+        position:'absolute', inset:0,
+        display:'flex', flexDirection:'column',
+        padding:'16px 16px 0',
+      }}>
 
-      <div style={{ position:'absolute', top:8, left:16 }}>
-        <NFCBox isConnecting={true} onTap={() => {}}/>
-      </div>
+      <NFCBox isConnecting={true} onTap={() => {}}/>
 
       <div style={{
-        position:'absolute', top:340, left:0, right:0, textAlign:'center',
+        textAlign:'center', marginTop:24,
         fontFamily:'Inter,sans-serif', fontSize:13, fontWeight:300,
         color:'rgba(255,255,255,0.35)',
       }}>Bluetooth will activate automatically.</div>
 
       <motion.button onClick={onCancel} whileTap={{ scale:0.96 }}
         style={{
-          position:'absolute', bottom:50, left:0, right:0,
+          marginTop:'auto', marginBottom:24,
           background:'none', border:'none', cursor:'pointer',
           fontFamily:'Teko,sans-serif', fontSize:24, fontWeight:400,
           letterSpacing:'0.5px', color:'rgba(255,255,255,0.35)',
+          alignSelf:'center',
         }}>Cancel</motion.button>
     </motion.div>
   )

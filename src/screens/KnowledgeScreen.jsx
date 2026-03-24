@@ -49,7 +49,7 @@ export default function KnowledgeScreen({ onOpenContent, activeTab, onTabChange 
           </div>
 
           {/* Tutorial card — same as FirstEntry: bg=#2D7FF9, image overflows top, outlined Watch btn */}
-          <div style={{ width:370, height:140, borderRadius:8, background:'#2D7FF9',
+          <div style={{ width:'100%', height:140, borderRadius:8, background:'#2D7FF9',
             position:'relative', overflow:'hidden', flexShrink:0 }}>
             {/* Text column */}
             <div style={{ position:'absolute', top:16, left:16, right:156, bottom:16,
@@ -115,7 +115,7 @@ export default function KnowledgeScreen({ onOpenContent, activeTab, onTabChange 
                   transition={{delay:i*0.06}}
                   className="pressable"
                   onClick={() => onOpenContent && onOpenContent(card)}
-                  style={{ width:370, borderRadius:8, background:'#1C1D21',
+                  style={{ width:'100%', borderRadius:8, background:'#1C1D21',
                     padding:16 }}>
                   <div style={{ display:'flex' }}>
                     {/* Workout Info: w=248 VERTICAL */}

@@ -19,7 +19,7 @@ const Btn = ({ label, onClick, variant }) => {
       whileHover={{ scale:1.02, opacity:0.9 }}
       whileTap={{ scale:0.96, opacity:0.75 }}
       style={{
-        width:370, height:44, borderRadius:6, padding:'0 12px',
+        width:'100%', height:44, borderRadius:6, padding:'0 12px',
         display:'flex', alignItems:'center', justifyContent:'center',
         fontFamily:'Teko,sans-serif', fontSize:24, fontWeight:500,
         letterSpacing:'1.1px', cursor:'pointer', ...s,
@@ -69,7 +69,7 @@ export default function SplashScreen({ onStartWorkout, onLogin, onSignup }) {
       <motion.div
         initial={{ opacity:0, y:24 }} animate={{ opacity:1, y:0 }}
         transition={{ delay:0.42, duration:0.5 }}
-        style={{ position:'absolute', top:635, left:16, width:370,
+        style={{ position:'absolute', top:635, left:16, width:'100%',
           display:'flex', flexDirection:'column', gap:16 }}
       >
         <Btn label="START WORKOUT" onClick={onStartWorkout} variant="primary"/>

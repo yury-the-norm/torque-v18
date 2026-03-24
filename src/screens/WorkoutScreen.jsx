@@ -363,7 +363,7 @@ function LiveSession({ deviceName, onEndSession, onExpand }) {
     <motion.div
       initial={{ opacity:0, y:-14 }} animate={{ opacity:1, y:0 }}
       transition={{ type:'spring', stiffness:280, damping:26 }}
-      style={{ width:'var(--card-w, 370px)', borderRadius:8,
+      style={{ width:'100%', borderRadius:8,
         border:'1px solid rgba(240,78,35,0.3)',
         background:'rgba(28,29,33,0.95)', overflow:'hidden' }}>
 
@@ -453,7 +453,7 @@ function SessionCard({ session, idx }) {
     <motion.div
       initial={{ opacity:0, y:14 }} animate={{ opacity:1, y:0 }}
       transition={{ delay:idx*0.06, type:'spring', stiffness:340, damping:28 }}
-      style={{ width:'var(--card-w, 370px)', borderRadius:8,
+      style={{ width:'100%', borderRadius:8,
         border:'1px solid rgba(255,255,255,0.06)',
         background:'rgba(28,29,33,0.7)', padding:8 }}>
       {/* Frame 16: header */}
@@ -506,18 +506,19 @@ function FinishModal({ onSave, onDiscard }) {
           borderTop:'1px solid rgba(255,255,255,0.08)' }}>
         <div style={{ width:32, height:4, background:'rgba(255,255,255,0.15)',
           borderRadius:2, margin:'8px auto 24px' }}/>
-        <div style={{ fontFamily:'Inter,sans-serif', fontSize:20, color:'#fff', paddingLeft:29, marginBottom:0 }}>
+        <div style={{ fontFamily:'Inter,sans-serif', fontSize:20, color:'#fff',
+          padding:'0 20px', marginBottom:0 }}>
           Before we finish
         </div>
-        <div style={{ padding:'16px 29px 0', display:'flex', flexDirection:'column', gap:16 }}>
+        <div style={{ padding:'16px 16px 0', display:'flex', flexDirection:'column', gap:12 }}>
           <motion.button onClick={onSave} whileTap={{ scale:0.97 }}
-            style={{ width:344, height:44, borderRadius:6, background:'#F04E23', border:'none',
+            style={{ width:'100%', height:44, borderRadius:6, background:'#F04E23', border:'none',
               fontFamily:'Teko,sans-serif', fontSize:24, fontWeight:500,
               letterSpacing:'1.1px', color:'#fff', cursor:'pointer' }}>
             Save results
           </motion.button>
           <motion.button onClick={onDiscard} whileTap={{ scale:0.97 }}
-            style={{ width:344, height:44, borderRadius:6,
+            style={{ width:'100%', height:44, borderRadius:6,
               background:'rgba(255,255,255,0.06)', border:'1px solid rgba(255,255,255,0.12)',
               fontFamily:'Teko,sans-serif', fontSize:24, fontWeight:500,
               letterSpacing:'1.1px', color:'rgba(255,255,255,0.55)', cursor:'pointer' }}>
